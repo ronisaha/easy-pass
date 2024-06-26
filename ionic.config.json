@@ -1,0 +1,7 @@
+{
+  "name": "Easy Password Generator",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
