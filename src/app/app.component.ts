@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import {Component, Optional} from '@angular/core';
+import {IonApp, IonRouterOutlet, Platform} from '@ionic/angular/standalone';
+import {App} from "@capacitor/app";
 
 @Component({
   selector: 'app-root',
@@ -8,5 +9,14 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
   imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor() {}
+  constructor(
+    private platform: Platform,
+    @Optional() private routerOutlet?: IonRouterOutlet
+  ) {
+    this.platform.backButton.subscribeWithPriority(-1, () => {
+      if (this.routerOutlet && !this.routerOutlet.canGoBack()) {
+        App.exitApp();
+      }
+    });
+  }
 }
