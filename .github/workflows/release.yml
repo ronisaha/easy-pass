@@ -12,7 +12,7 @@ permissions:
 env:
   # Google Play track to publish to. Start with `internal`, switch to
   # `production` once you are confident in the pipeline.
-  PLAY_TRACK: internal
+  PLAY_TRACK: production
   # Added to the GitHub run number to form the Android versionCode. The result
   # must always be GREATER than the highest versionCode already on Play Console.
   VERSION_CODE_OFFSET: 6
