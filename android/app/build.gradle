@@ -7,8 +7,10 @@ android {
         applicationId "net.xiidea.easypass"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5
-        versionName "1.0.5"
+        // versionCode / versionName can be overridden by CI via
+        // -PversionCode=<int> and -PversionName=<string> (see .github/workflows/release.yml)
+        versionCode project.hasProperty('versionCode') ? project.property('versionCode').toInteger() : 5
+        versionName project.hasProperty('versionName') ? project.property('versionName') : "1.0.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,10 +18,26 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // Release signing is configured only when a keystore is supplied through
+    // environment variables (e.g. from CI). Local debug builds are unaffected.
+    signingConfigs {
+        release {
+            def storeFilePath = System.getenv("KEYSTORE_PATH")
+            if (storeFilePath) {
+                storeFile file(storeFilePath)
+                storePassword System.getenv("KEYSTORE_PASSWORD")
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (System.getenv("KEYSTORE_PATH")) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
