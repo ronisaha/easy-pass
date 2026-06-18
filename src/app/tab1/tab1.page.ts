@@ -8,14 +8,14 @@ import {
   IonInput,
   IonItem,
   IonLabel,
-  IonList,
+  IonList, IonThumbnail,
   IonTitle,
   IonToolbar,
   ToastController
 } from '@ionic/angular/standalone';
 import {Clipboard} from "@capacitor/clipboard";
 import {addIcons} from "ionicons";
-import {copy, key} from "ionicons/icons";
+import {copy, key, warning, checkmarkCircle} from "ionicons/icons";
 import {FormsModule} from "@angular/forms";
 import {NgIf} from "@angular/common";
 
@@ -24,7 +24,7 @@ import {NgIf} from "@angular/common";
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonInput, IonCheckbox, IonIcon, IonLabel, FormsModule, IonButton, NgIf],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonInput, IonCheckbox, IonIcon, IonLabel, FormsModule, IonButton, NgIf, IonThumbnail],
 })
 export class Tab1Page {
   passwordLength: number = 12;
@@ -45,9 +45,11 @@ export class Tab1Page {
   private numberSet: string = '';
   private symbolSet: string = '';
   private nSetNumber = 0;
+  private MAX_TRY_LIMIT: number = 10;
+  private MAX_ALLOWED_VALUE: number = 255;
 
   constructor(private toastController: ToastController) {
-    addIcons({copy, key});
+    addIcons({copy, key, warning, checkmarkCircle});
     this.updateSet();
     this.generate();
   }
@@ -69,23 +71,36 @@ export class Tab1Page {
     })
   }
 
+  onInput(ev: any) {
+    const value = ev.target!.value;
+    if(value > this.MAX_ALLOWED_VALUE) {
+      ev.target.value = this.passwordLength = this.MAX_ALLOWED_VALUE;
+    }
+    this.updateSet();
+  }
+
   updateSet() {
+    if (this.passwordLength < 6) {
+      this.passwordLength = 6;
+    }
+
+    if (this.passwordLength > 255) {
+      this.passwordLength = 255;
+    }
+
     this.password = '';
     this.nSetNumber = 0;
     this.numberSet = '23456789';
     this.lowerLatterSet = 'abcdefghjkmnpqrstuvwxyz';
     this.upperLatterSet = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
     this.symbolSet = this.customSymbolSet;
-    if( !this.bNoSimilar )
-    {
-     this.lowerLatterSet	+="ilo";
-      this.upperLatterSet	+="IO";
-      this.numberSet+="01";
-    }
-    else
-    {
-      if( this.bSymbol )
-        this.symbolSet = this.symbolSet.replace('|','');
+    if (!this.bNoSimilar) {
+      this.lowerLatterSet += "ilo";
+      this.upperLatterSet += "IO";
+      this.numberSet += "01";
+    } else {
+      if (this.bSymbol)
+        this.symbolSet = this.symbolSet.replace('|', '');
     }
 
     this.totalSet = '';
@@ -114,17 +129,18 @@ export class Tab1Page {
   }
 
   validate(): void {
+    this.password = '';
     if (this.nSetNumber == 0) {
       this.error = 'You must select at least one character set!';
       return;
     }
 
-    if(this.bAllUnique && this.passwordLength > this.totalSet.length) {
+    if (this.bAllUnique && this.passwordLength > this.totalSet.length) {
       this.error = 'No enough character sets selected.';
       return;
     }
 
-    if(this.bBeginLatter && !this.bLower && !this.bUpper) {
+    if (this.bBeginLatter && !this.bLower && !this.bUpper) {
       this.error = 'No Lowercase or Uppercase letters selected. But Do not begin with number or symbol option selected'
       return;
     }
@@ -200,11 +216,11 @@ export class Tab1Page {
     return szBuffer;
   }
 
-  generate() {
+  generate(repeat: number = 0) {
     let nAllLength = this.totalSet.length;
     let szBuffer = "";
     let nBufferLength = this.passwordLength - this.nSetNumber
-    if(!this.bAllUnique) {
+    if (!this.bAllUnique) {
       for (let i = 0; i < nBufferLength; i++) {
         let nPos = 0;
         const array5 = new Uint32Array(1);
@@ -212,7 +228,7 @@ export class Tab1Page {
         nPos = crypto.getRandomValues(array5) % nAllLength;
         szBuffer += this.totalSet.substring(nPos, nPos + 1);
       }
-    }else{
+    } else {
       let szAllCopy = this.totalSet;
       let bStop = false;
       for (let i = 0; i < nBufferLength && !bStop; i++) {
@@ -294,8 +310,12 @@ export class Tab1Page {
         szBuffer = "ERR";
     }
 
-    if(szBuffer === 'ERR') {
-      this.generate();
+    if (szBuffer === 'ERR') {
+      if (repeat < this.MAX_TRY_LIMIT) {
+        this.generate(repeat++);
+      } else {
+        this.password = 'Unable to generate! please try again';
+      }
       return;
     }
 

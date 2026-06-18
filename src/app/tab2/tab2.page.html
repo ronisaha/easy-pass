@@ -7,9 +7,93 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div id="container">
-    <p>
-      This app is designed to generate random password. We do not store any passwords.
-    </p>
-  </div>
+  <ion-accordion-group>
+    <ion-accordion value="first" toggleIcon="caret-down-circle" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Password Length</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <p>Allowed password length is between 6 to 256.</p>
+      </div>
+    </ion-accordion>
+    <ion-accordion value="second" toggleIcon="caret-down-circle" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Configure Symbol list
+        </ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <p>
+          Though symbol set is preloaded you can customize symbol list as your need
+          Default symbols are: <br />
+          <strong>{{customSymbolSet}}</strong>
+        </p>
+      </div>
+    </ion-accordion>
+    <ion-accordion value="numbers" toggleIcon="caret-down-circle" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Include Numbers</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <p>Enabling this settings will include character from number set(i.e 0123456789)</p>
+      </div>
+    </ion-accordion>
+    <ion-accordion value="Lowercase" toggleIcon="caret-down-circle" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Include Lowercase</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <p>Enabling this settings will include lowercase characters (i.e abcdefghijklmnopqrstuvwxyz)</p>
+      </div>
+    </ion-accordion>
+    <ion-accordion value="uppercase" toggleIcon="caret-down-circle" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Include Uppercase</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <p>Enabling this settings will include uppercase characters (i.e ABCDEFGHIJKLMNOPQRSTUVWXYZ)</p>
+      </div>
+    </ion-accordion>
+    <ion-accordion value="beginLatter" toggleIcon="caret-down-circle" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Don't begin with a number or symbol</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <p>Enabling this settings force the password must begin With A Letter. To enable this you must enable one of
+          Include Lowercase or Include Uppercase settings.</p>
+      </div>
+    </ion-accordion>
+    <ion-accordion value="similer" toggleIcon="caret-down-circle" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Exclude similar</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <p>Enabling this settings ensure password must not contain similar characters like i, l, 1, L, o, 0, O, etc.</p>
+      </div>
+    </ion-accordion>
+    <ion-accordion value="unique" toggleIcon="caret-down-circle" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Use Unique Characters</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <p>This settings ensure generator doesn't use the same character more than once.</p>
+      </div>
+    </ion-accordion>
+    <ion-accordion value="sequential" toggleIcon="caret-down-circle" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>No Sequential Character</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <p>This settings ensure generator doesn't use sequential characters, e.g. abc, 123</p>
+      </div>
+    </ion-accordion>
+    <ion-accordion value="privacy" toggleIcon="caret-down-circle" toggleIconSlot="start">
+      <ion-item slot="header" color="light">
+        <ion-label>Privacy</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <p>This app is designed to generate random password. We do not store any passwords. For more about privacy read
+          <a href="https://ronisaha.github.io/easy-pass/privacy/">here</a></p>
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
 </ion-content>
